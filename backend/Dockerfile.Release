@@ -1,0 +1,18 @@
+FROM python:3.6 as build
+
+WORKDIR /build
+COPY . .
+RUN python setup.py sdist bdist_wheel
+
+FROM python:3.6
+
+WORKDIR /app
+COPY --from=build /build/dist .
+COPY ./setup_db.py ./setup_db.py
+
+RUN pip install Virtual_Lab_Manager-0.0.0-py3-none-any.whl
+RUN pip install waitress
+
+RUN python setup_db.py
+
+ENTRYPOINT ["waitress-serve", "service_interface:app"]

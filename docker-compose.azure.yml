@@ -1,0 +1,35 @@
+version: '3.6'
+
+services:
+
+  haproxy:
+    image: vmautomation.azurecr.io/vmautomationhaproxy:latest
+    ports:
+      - 80:80
+    depends_on: 
+      - backend
+      - frontend
+
+  backend:
+    image: vmautomation.azurecr.io/vmautomationbackend:latest
+    environment:
+      - JWT_SECRET=${JWT_SECRET}
+
+  frontend:
+    image: vmautomation.azurecr.io/vmautomationfrontend:latest
+
+  worker:
+    image: vmautomation.azurecr.io/vmautomationworker:latest
+    privileged: true
+    network_mode: host
+    command: ./start_release.sh 8080
+    volumes:
+      - ./dind:/var/lib/docker
+      - ./labs:/labs
+    environment:
+      - WORKER_ID=MCHE_WORKER1
+      - MAIN_SERVER_URL=http://localhost/api
+      - WORKER_HOST=172.17.0.1
+      - WORKER_PORT=8080
+      - LABS_PATH=/labs
+      - LAB_TEMPLATES_PATH=/app/vm

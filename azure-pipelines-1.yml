@@ -1,0 +1,56 @@
+# Starter pipeline
+# Start with a minimal pipeline that you can customize to build and deploy your code.
+# Add steps that build, run tests, deploy, and more:
+# https://aka.ms/yaml
+
+trigger:
+  branches:
+    exclude:
+      - master
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+stages:
+- stage: Test
+  displayName: Test Stage
+  jobs:
+    - job: Test_Backend
+      displayName: Test Backend Job
+      steps:
+      - task: UsePythonVersion@0
+        inputs:
+          versionSpec: '3.6'
+      - script: python setup.py install
+        displayName: 'Install'
+        workingDirectory: backend/
+      - script: pytest
+        displayName: 'Unit Tests'
+        workingDirectory: backend/tests/
+      # - script: pytest
+      #   displayName: 'Service Tests'
+      #   workingDirectory: backend/service_tests/
+  
+
+    - job: Test_Worker
+      displayName: Test Worker Job
+      steps:
+      - task: UsePythonVersion@0
+        inputs:
+          versionSpec: '3.6'
+      - task: PythonScript@0
+        inputs:
+          workingDirectory: vms-worker/
+          scriptSource: filePath
+          scriptPath: $(System.DefaultWorkingDirectory)/vms-worker/setup.py
+          arguments: test
+
+    - job: Test_Front
+      displayName: Test Front Job
+      steps:
+      - script: npm install
+        displayName: Install
+        workingDirectory: frontend/
+      - script: npx jest --coverage
+        displayName: Test
+        workingDirectory: frontend/

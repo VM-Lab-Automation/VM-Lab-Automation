@@ -1,0 +1,21 @@
+version: '3.6'
+
+services:
+
+  worker:
+    build:
+      context: ./vms-worker
+      dockerfile: Dockerfile.Release
+    privileged: true
+    network_mode: host
+    command: ./start_release.sh 8003
+    volumes:
+      - /dev/vboxdrv:/dev/vboxdrv
+      - ./vms-worker/dind:/var/lib/docker
+      - ./vms-worker/labs:/labs
+    environment:
+      - WORKER_ID=WORKER_AGH_1
+      - MAIN_SERVER_URL=http://localhost:8080/api
+      - WORKER_HOST=172.17.0.1
+      - WORKER_PORT=8003
+      - LABS_PATH=/labs

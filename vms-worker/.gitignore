@@ -1,0 +1,10 @@
+*.swp
+__pycache__/
+*.egg-info
+venv/
+vm/
+.eggs/
+dist/
+build/
+labs/
+dind/

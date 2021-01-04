@@ -1,0 +1,20 @@
+version: '3.6'
+
+services:
+
+  haproxy:
+    build: ./haproxy
+    ports:
+      - 80:80
+
+  backend:
+    build: 
+      context: ./backend
+      dockerfile: Dockerfile.Release
+    ports:
+      - 8080:8080
+    environment:
+      - JWT_SECRET=${JWT_SECRET}
+
+  frontend:
+    build: ./frontend

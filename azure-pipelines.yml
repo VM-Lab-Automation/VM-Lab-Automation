@@ -1,0 +1,99 @@
+# Docker
+# Build and push an image to Azure Container Registry
+# https://docs.microsoft.com/azure/devops/pipelines/languages/docker
+
+trigger:
+- master
+
+resources:
+- repo: self
+
+variables:
+  # Container registry service connection established during pipeline creation
+  dockerRegistryServiceConnection: '5a416893-a55d-49ce-989b-0554b46bc9d1'
+  backendImageRepository: 'vmautomationbackend'
+  frontendImageRepository: 'vmautomationfrontend'
+  haproxyImageRepository: 'vmautomationhaproxy'
+  workerImageRepository: 'vmautomationworker'
+  containerRegistry: 'vmautomation.azurecr.io'
+  backendDockerfilePath: '$(Build.SourcesDirectory)/backend/Dockerfile.Release'
+  workerDockerfilePath: '$(Build.SourcesDirectory)/vms-worker/Dockerfile.Release'
+  frontendDockerfilePath: '$(Build.SourcesDirectory)/frontend/Dockerfile'
+  haproxyDockerfilePath: '$(Build.SourcesDirectory)/haproxy/Dockerfile'
+  tag: '$(Build.BuildId)'
+  
+  # Agent VM image name
+  vmImageName: 'ubuntu-latest'
+
+stages:
+- stage: BuildAndPush
+  displayName: Build and Push Docker Images
+  jobs:  
+  - job: BuildBackend
+    displayName: Build Backend
+    pool:
+      vmImage: $(vmImageName)
+    steps:
+    - task: Docker@2
+      displayName: Build and push an image to container registry
+      inputs:
+        command: buildAndPush
+        repository: $(backendImageRepository)
+        dockerfile: $(backendDockerfilePath)
+        buildContext: backend/
+        containerRegistry: $(dockerRegistryServiceConnection)
+        tags: |
+          $(tag)
+          latest
+
+  - job: BuildWorker
+    displayName: Build Worker
+    pool:
+      vmImage: $(vmImageName)
+    steps:
+    - task: Docker@2
+      displayName: Build and push an image to container registry
+      inputs:
+        command: buildAndPush
+        repository: $(workerImageRepository)
+        dockerfile: $(workerDockerfilePath)
+        buildContext: vms-worker/
+        containerRegistry: $(dockerRegistryServiceConnection)
+        tags: |
+          $(tag)
+          latest
+
+ 
+  - job: BuildFrontend
+    displayName: Build Frontend
+    pool:
+      vmImage: $(vmImageName)
+    steps:
+    - task: Docker@2
+      displayName: Build and push an image to container registry
+      inputs:
+        command: buildAndPush
+        repository: $(frontendImageRepository)
+        dockerfile: $(frontendDockerfilePath)
+        buildContext: frontend/
+        containerRegistry: $(dockerRegistryServiceConnection)
+        tags: |
+          $(tag)
+          latest
+
+  - job: BuildHaproxy
+    displayName: Build Haproxy
+    pool:
+      vmImage: $(vmImageName)
+    steps:
+    - task: Docker@2
+      displayName: Build and push an image to container registry
+      inputs:
+        command: buildAndPush
+        repository: $(haproxyImageRepository)
+        dockerfile: $(haproxyDockerfilePath)
+        buildContext: haproxy/
+        containerRegistry: $(dockerRegistryServiceConnection)
+        tags: |
+          $(tag)
+          latest
