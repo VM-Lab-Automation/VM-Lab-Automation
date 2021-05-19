@@ -42,7 +42,7 @@ class LabsService:
         return self.__get_worker_client(worker)
 
     def create_lab(self, lab_request: LabCreateRequest):
-        id = uuid.uuid4()
+        id = str(uuid.uuid4())
         worker = self.workers_selector.next()
         template = self.lab_templates_service.get_template_by_lab_name(lab_request.lab_template_name)
         lab = Lab(
@@ -54,8 +54,8 @@ class LabsService:
             template.id,
             lab_request.start_date,
             lab_request.expiration_date,
-            len(lab_request.machines),
-            lab_request.description
+            lab_request.description,
+            len(lab_request.machines)
         )
         self.labs_repository.insert(lab)
         for i, machine in enumerate(lab_request.machines[:MAX_VM_COUNT]):

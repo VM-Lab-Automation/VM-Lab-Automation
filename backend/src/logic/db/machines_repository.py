@@ -1,5 +1,15 @@
 from logic.db.db_connection import DbConnection
 from models.machine import Machine
+from sqlalchemy import Table, MetaData, Column, String
+
+meta = MetaData()
+machines = Table(
+    'machines', meta,
+    Column('id', String, primary_key=True),
+    Column('lab_id', String),
+    Column('default_name', String),
+    Column('display_name', String),
+)
 
 
 class MachinesRepository:
@@ -9,16 +19,13 @@ class MachinesRepository:
 
     def insert(self, machine: Machine):
         with DbConnection(self.config) as con:
-            c = con.cursor()
-            c.execute("INSERT INTO machines VALUES(?, ?, ?, ?)", (
-                str(machine.id),
-                str(machine.lab_id),
-                machine.default_name,
-                machine.display_name
-            ))
+            con.execute(machines.insert().values(id=str(machine.id),
+                                                 lab_id=str(machine.lab_id),
+                                                 default_name=machine.default_name,
+                                                 display_name=machine.display_name))
 
     def get_by_lab_id(self, lab_id) -> [Machine]:
         with DbConnection(self.config) as con:
-            c = con.cursor()
-            rows = c.execute("SELECT * FROM machines WHERE lab_id='%s'" % lab_id)
+            result = con.execute(machines.select().where(machines.c.lab_id == lab_id))
+            rows = result.fetchall()
             return [Machine(*r) for r in rows]

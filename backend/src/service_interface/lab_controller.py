@@ -37,7 +37,7 @@ class Labs(Resource):
 @api.route('/<lab_id>')
 class LabDetails(Resource):
 
-    @api.marshal_list_with(lab_details_model)
+    @api.marshal_with(lab_details_model)
     @authorize(di.tokens_helper)
     def get(self, lab_id):
         return di.labs_service.get_lab_details(lab_id)

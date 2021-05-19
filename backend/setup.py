@@ -15,7 +15,9 @@ setup(
         'flask-cors==3.0.9',
         'pyjwt==1.7.1',
         'bcrypt==3.2.0',
-        'wiremock==2.1.3'
+        'wiremock==2.1.3',
+        'psycopg2-binary==2.8.6',
+        'SQLAlchemy==1.4.2'
     ],
     test_suite="tests",
     tests_require=['pytest'],

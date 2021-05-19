@@ -1,5 +1,5 @@
 venv/
 labs
-dind/
+dind*
 Dockerfile
 Dockerfile.Release

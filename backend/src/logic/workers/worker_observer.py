@@ -11,7 +11,7 @@ def __workers_observer_thread(worker_repository):
         workers = worker_repository.get_all_running()
         now = datetime.now()
         for w in workers:
-            wlu = DateHelper.datetime_from_ISO_string(w.last_update)
+            wlu = w.last_update
             if (now - wlu).total_seconds() >= 15:
                 log.warning("Worker with id {} seems to be unavailable. Changing state to not running.".format(w.worker_id))
                 w.state = 2

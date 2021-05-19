@@ -4,20 +4,20 @@ import os
 class Config(object):
     DEBUG = False
     TESTING = False
-    DATABASE = 'vlab.db'
+    DATABASE_CONNECTION_STRING = ''
     JWT_SECRET = os.getenv('JWT_SECRET')
 
 
 class ProductionConfig(Config):
-    DATABASE = 'vlab.db'
+    DATABASE_CONNECTION_STRING = os.getenv('DATABASE_CONNECTION_STRING')
 
 
 class DevelopmentConfig(Config):
     DEBUG = True
-    DATABASE = 'vlab.db'
+    DATABASE_CONNECTION_STRING = os.getenv('DATABASE_CONNECTION_STRING')
 
 
 class TestingConfig(Config):
     DEBUG = True
-    DATABASE = 'test_db.db'
+    DATABASE_CONNECTION_STRING = ''
     JWT_SECRET = 'testing'

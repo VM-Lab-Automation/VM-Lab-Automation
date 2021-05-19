@@ -48,4 +48,6 @@ RUN pip3 install *.whl
 RUN pip3 install waitress
 
 COPY ./start_release.sh .
+
+ENV LAB_TEMPLATES_PATH="/app/vm"
 RUN chmod +x start_release.sh

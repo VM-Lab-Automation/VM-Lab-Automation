@@ -10,7 +10,7 @@ class WorkerService:
         self.worker_repository = worker_repository
 
     def update_state(self, worker_id, state, host, port):
-        self.worker_repository.insert_or_update(Worker(worker_id, state, host, port, DateHelper.date_to_ISO_string(datetime.now())))
+        self.worker_repository.insert_or_update(Worker(worker_id, state, host, port, datetime.now()))
 
     def get_workers(self):
         return self.worker_repository.get_all()

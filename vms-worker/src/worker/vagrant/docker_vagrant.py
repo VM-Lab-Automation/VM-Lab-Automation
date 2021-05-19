@@ -40,8 +40,11 @@ class DockerVagrant:
         def clean_port(port_str: str):
             port = port_str.strip().split('/')[0]
             if ':' in port:
-                port = port[port.find(':')+1:]
-            return int(port) if port != '' else 0
+                port = port[port.rfind(':')+1:]
+            try:
+                return int(port) if port != '' else 0   
+            except:
+                return 0
 
         return [(clean_port(p[0]) if len(p) > 0 else 0, clean_port(p[1]) if len(p)>1 else 0) for p in ports_splitted]
 
